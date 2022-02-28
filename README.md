@@ -1,0 +1,2 @@
+# Call-Presence-Manager
+This was created by me in late 2019 as an automated solution to managing call presence for the employees at my company. It polls our timekeeping software's SQL database to check their status, and makes an API call to our VOIP solution (RingCentral) to change the employee's call presence accordingly (either "Not Accepting" or "Available"). Originally this was running on a on-premise Linux VM (Ubuntu 18.04), however after it was successful for a few months we migrated each component to an Azure VM.
