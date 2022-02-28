@@ -4,6 +4,7 @@ import time
 import datetime
 
 def respTest(platform):
+    # Testing function, checking the response on the Presence API endpoint.
     resp = platform.get('/restapi/v1.0/account/~/presence',
     {
     'detailedTelephonyState' : True
@@ -11,6 +12,7 @@ def respTest(platform):
     return resp.response()
 
 def rcLogin():
+    # Logs in to RingCentral
     sdk = SDK(credentials.rc_CLIENTID, credentials.rc_SECRETKEY, credentials.rc_PRODSERVER)
 
     platform = sdk.platform()
@@ -25,6 +27,7 @@ def rcLogin():
 
 
 def get_status(platform):
+    # GETS a list of extensions and their call presence
     resp = platform.get('/restapi/v1.0/account/~/presence',
     {
     'detailedTelephonyState' : True
@@ -43,11 +46,12 @@ def get_status(platform):
 
 
 def update_status(platform, accountId, extensionId, body):
+    # PUTS a new call presence status on an extention
     resp = platform.put(f"/restapi/v1.0/account/{accountId}/extension/{extensionId}/presence", body)
     return (resp.response())
 
 
-# Take All Calls Body
+# "Take All Calls" body that is used in the update_status function
 tac_body = {
       "userStatus": "Available",
       "dndStatus": 'TakeAllCalls',
@@ -56,7 +60,7 @@ tac_body = {
       "pickUpCallsOnHold": True,
    }
 
-# Do Not Accept Deparment Calls Body
+# "Do Not Accept" body that is used in the update_status function
 dna_body = {
       "userStatus": "Busy",
       "dndStatus": 'DoNotAcceptDepartmentCalls',
@@ -64,8 +68,3 @@ dna_body = {
       "ringOnMonitoredCall": False,
       "pickUpCallsOnHold": True,
    }
-'''my_statuses = get_status(rcLogin())
-for x in my_statuses:
-    if x[1] == '314':
-        r = update_status(rcLogin(), '~',f'{x[0]}', dna_body)
-        print(r)'''
