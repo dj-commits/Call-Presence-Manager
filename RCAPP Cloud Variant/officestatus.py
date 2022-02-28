@@ -13,7 +13,7 @@ status_dict = {'1' : 'In/Office', '2' : 'Out', '3' : 'On-Site', '4' : 'Lunch', '
 inQueueStatuses = [1, 8]
 
 def getOStatus():
-    # This tries to return a list of statuses from the OfficeStatus server; a general catch statement is used to exit this function gracefully if there are issues connecting to the server.
+    # This tries to return a list of statuses from the OfficeStatus server; a general catch statement is used to exit this function if there are issues connecting to the server.
     try:
         conn = pyodbc.connect(f'{credentials.sql_conn_string}')
         cursor = conn.cursor()
@@ -48,11 +48,11 @@ def checkOStatusChange(oldOStatuses, newOStatuses):
         
     
 def updateRCPresence(oStatuses):
-    # This function call
+    # This function issues the API call to RingCentral to change a users call presence, if a change is detected in "checkOStatusChange".
     try:
         platform = backend.rcLogin()
         rcStatus = backend.get_status(platform)
-        sysnom = 0
+        #sysnom = 0
         if type(rcStatus) == list:   
             for x in oStatuses:
                 for y in rcStatus:
@@ -78,6 +78,7 @@ def updateRCPresence(oStatuses):
         return 0
 
 def frkbmb():
+    # This function issues an API call that sets everyone to available if communciation is lost  with the OfficeStatus SQL server.
     try:
         platform = backend.rcLogin()
         rcStatus = backend.get_status(platform)
@@ -93,6 +94,9 @@ def frkbmb():
             time.sleep(60) 
                    
 def updateLoop():
+    # Main loop of the script/program. Checks OfficeStatus every 4 seconds for changes, then issues API calls if necessary. 
+    # If there are two errors connecting to OfficeStatus, then it issues an immediate "available" API call using frkbmb(). 
+    # It manually runs API calls every 60 seconds as a contigency.
     err_count = 0
     catchUP_count = 0
     while True:
